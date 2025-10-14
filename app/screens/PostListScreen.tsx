@@ -1,60 +1,54 @@
 import React from "react";
 import { StyleSheet, Pressable, FlatList, Text, View } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../_layout";
-
-type Props = NativeStackScreenProps<RootStackParamList, "PostList">;
+import { useRouter } from "expo-router";
 
 const POSTS = [
-  {
-    id: "1",
-    title: "React Native is Awesome",
-    content:
-      "React Native lets you build mobile apps using only JavaScript. Learn once, write anywhere! This is a fake post used for the exercise.",
-  },
-  {
-    id: "2",
-    title: "State Management Tips",
-    content:
-      "Managing state can be tricky. Use simple patterns first, then introduce libraries when needed. This is sample content for the exercise.",
-  },
-  {
-    id: "3",
-    title: "UI Design Principles",
-    content:
-      "Good UI is about clarity and consistency. Keep interfaces simple and predictable. More sample content here.",
-  },
-  {
-    id: "4",
-    title: "Optimizing Performance",
-    content:
-      "Profile first, then optimize. Use proper list virtualization and avoid unnecessary renders. This is dummy text.",
-  },
+  { id: "1", title: "React Native is Awesome", content: "React Native lets you build mobile apps using only JavaScript. Learn once, write anywhere! This is a fake post used for the exercise." },
+  { id: "2", title: "State Management Tips", content: "Managing state can be tricky. Use simple patterns first, then introduce libraries when needed. This is sample content for the exercise." },
+  { id: "3", title: "UI Design Principles", content: "Good UI is about clarity and consistency. Keep interfaces simple and predictable. More sample content here." },
+  { id: "4", title: "Optimizing Performance", content: "Profile first, then optimize. Use proper list virtualization and avoid unnecessary renders. This is dummy text." },
 ];
 
-export default function PostListScreen({ navigation }: Props) {
+export default function PostListScreen() {
+  const router = useRouter();
+
   function renderItem({ item }: { item: (typeof POSTS)[number] }) {
     return (
-      <>
-        {/* Replace this with your code here for each item to render (Use Pressable Component) */}
-      </>
+      <Pressable
+        style={({ pressed }) => [styles.item, pressed && styles.itemPressed]}
+        onPress={() =>
+          router.push({
+            pathname: "/screens/PostDetailScreen",
+            params: { postId: item.id, title: item.title, content: item.content },
+          })
+        }
+      >
+        <Text style={{ fontSize: 16, fontWeight: "600", marginBottom: 6 }}>
+          {item.title}
+        </Text>
+        <Text numberOfLines={2} style={{ color: "#555" }}>
+          {item.content}
+        </Text>
+      </Pressable>
     );
   }
 
   return (
     <View style={styles.container}>
-      {/* Replace this with your code to render the list of items */}
+      <FlatList
+        contentContainerStyle={styles.list}
+        data={POSTS}
+        keyExtractor={(i) => i.id}
+        renderItem={renderItem}
+        ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  list: {
-    padding: 16,
-  },
+  container: { flex: 1 },
+  list: { padding: 16 },
   item: {
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -62,7 +56,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     backgroundColor: "rgba(0,0,0,0.03)",
   },
-  itemPressed: {
-    opacity: 0.7,
-  },
+  itemPressed: { opacity: 0.7 },
 });
+
+
+
+
